@@ -49,7 +49,6 @@ def train_encrypted_nn(train_loader, test_loader):
     model = crypten.nn.from_pytorch(pytorch_model, dummy_input)
     print("model converted")
     optimizer = crypten.optim.SGD(model.parameters(), lr=0.001)
-    # optimizer = None
     loss_fn = crypten.nn.CrossEntropyLoss()
 
     crypten.print("encrypting model")
@@ -72,7 +71,6 @@ def train_encrypted_nn(train_loader, test_loader):
             y_eye = torch.eye(10)
             y_one_hot = y_eye[y]
 
-            crypten.print("encrypting data")
             # Encrypt the data
             X_enc = crypten.cryptensor(X)
             y_enc = crypten.cryptensor(y_one_hot)
@@ -87,7 +85,7 @@ def train_encrypted_nn(train_loader, test_loader):
             optimizer.zero_grad()
 
 
-            if batch % 1 == 0:
+            if batch % 100 == 0:
                 end_time = time.perf_counter()
 
                 # Print progress every batch:
@@ -96,7 +94,7 @@ def train_encrypted_nn(train_loader, test_loader):
                 current = (batch + 1) * len(X)
                 crypten.print(f"loss: {batch_loss}  [{current}/{size}], time: {end_time-start_time}")
                 
-            # break
+            
         epoch_time_end = time.perf_counter()
         epoch_duration = epoch_time_end - epoch_time_start
         crypten.print(f"Epoch {epoch} took {epoch_duration} seconds")
@@ -126,7 +124,8 @@ def main():
     torch.set_num_threads(1)
     
     print("training encrypted model")
-    train_encrypted_nn(train_dataloader, test_dataloader)
+    for trial in range(9):
+        train_encrypted_nn(train_dataloader, test_dataloader)
 
 if __name__ == '__main__':
     main()
