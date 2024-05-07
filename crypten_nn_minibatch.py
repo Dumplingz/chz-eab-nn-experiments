@@ -10,6 +10,13 @@ import time
 import torch.nn as nn
 import csv
 
+# Define training parameters
+NUM_EPOCHS = 3
+BATCH_SIZE = 64
+OUTFILE = "crypten_experiments/minibatch_nn.csv"
+LEARNING_RATE = 0.001
+NUM_TRIALS = 1
+
 def download_mnist():
     # Download training data from open datasets.
     training_data = datasets.FashionMNIST(
@@ -30,7 +37,7 @@ def download_mnist():
     return training_data, test_data
 
 @mpc.run_multiprocess(world_size=2)
-def train_encrypted_nn(train_data, train_labels, batch_size=64):
+def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
     """
     Trains an encrypted model on data provided by train_loader.
 
@@ -48,7 +55,6 @@ def train_encrypted_nn(train_data, train_labels, batch_size=64):
     print("converting pytorch model to crypten model")
     model = crypten.nn.from_pytorch(pytorch_model, dummy_input)
     print("model converted")
-    optimizer = crypten.optim.SGD(model.parameters(), lr=0.001)
     loss_fn = crypten.nn.CrossEntropyLoss()
 
     crypten.print("encrypting model")
@@ -71,7 +77,7 @@ def train_encrypted_nn(train_data, train_labels, batch_size=64):
 
     num_batches = encrypted_train_data.size(0) // batch_size
 
-    for epoch in range(num_epochs):
+    for epoch in range(NUM_EPOCHS):
         epoch_time_start = time.perf_counter()
         for batch in range(num_batches):
             start, end = batch * batch_size, (batch + 1) * batch_size
@@ -87,8 +93,8 @@ def train_encrypted_nn(train_data, train_labels, batch_size=64):
 
             # perform backward pass:
             loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
+            model.zero_grad()
+            model.update_parameters(LEARNING_RATE)
 
 
             if batch % 100 == 0:
@@ -104,7 +110,7 @@ def train_encrypted_nn(train_data, train_labels, batch_size=64):
         epoch_time_end = time.perf_counter()
         epoch_duration = epoch_time_end - epoch_time_start
         crypten.print(f"Epoch {epoch} took {epoch_duration} seconds")
-        with open(f"crypten_experiments/minibatch_nn.csv", "a") as fp:
+        with open(OUTFILE, "a") as fp:
             wr = csv.writer(fp, dialect='excel')
             wr.writerow([epoch_duration, epoch, batch_size])
 
@@ -114,15 +120,14 @@ def main():
 
     training_data, test_data = download_mnist()
 
-    batch_size = 64
     print(type(training_data))
     array_training_data = torch.tensor(training_data.data).float()
     array_training_labels = torch.tensor(training_data.targets).long()
     print(array_training_data.shape)
 
     # Create data loaders.
-    train_dataloader = DataLoader(training_data, batch_size=batch_size)
-    test_dataloader = DataLoader(test_data, batch_size=batch_size)
+    train_dataloader = DataLoader(training_data, batch_size=BATCH_SIZE)
+    test_dataloader = DataLoader(test_data, batch_size=BATCH_SIZE)
 
     for X, y in test_dataloader:
         print(f"Shape of X [N, C, H, W]: {X.shape}")
@@ -134,8 +139,8 @@ def main():
     torch.set_num_threads(1)
 
     print("training encrypted model")
-    for trial in range(3):
-        for batch_size in [64, 128, 256]:
+    for trial in range(NUM_TRIALS):
+        for batch_size in [32, 64, 128, 256]:
             print(f"trial {trial} batch size {batch_size}")
             # train_encrypted_nn(train_dataloader, test_dataloader)
             train_encrypted_nn(array_training_data, array_training_labels, batch_size)
