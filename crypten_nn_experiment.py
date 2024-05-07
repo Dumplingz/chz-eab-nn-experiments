@@ -79,10 +79,11 @@ def train_encrypted_nn(train_loader, test_loader):
             output = model(X_enc)
             loss = loss_fn(output, y_enc)
 
+            optimizer.zero_grad()
+
             # perform backward pass: 
             loss.backward()
             optimizer.step()
-            optimizer.zero_grad()
 
 
             if batch % 100 == 0:

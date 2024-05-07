@@ -91,9 +91,10 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
             output = model(X_enc)
             loss = loss_fn(output, y_enc)
 
+            model.zero_grad()
+
             # perform backward pass:
             loss.backward()
-            model.zero_grad()
             model.update_parameters(LEARNING_RATE)
 
 

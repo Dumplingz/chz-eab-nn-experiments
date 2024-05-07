@@ -70,29 +70,43 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
     train_labels_one_hot = y_eye[train_labels]
 
     encrypted_train_data = crypten.cryptensor(train_data)
-    encrypted_train_labels_one_hot = crypten.cryptensor(train_labels_one_hot)
+    encrypted_train_labels_one_hot = crypten.cryptensor(train_labels_one_hot, requires_grad=True)
 
 
     num_batches = encrypted_train_data.size(0) // batch_size
 
     for epoch in range(NUM_EPOCHS):
         epoch_time_start = time.perf_counter()
+        # prev_params = [None] * 6
         for batch in range(num_batches):
             start, end = batch * batch_size, (batch + 1) * batch_size
 
             X_enc = encrypted_train_data[start:end]
             y_enc = encrypted_train_labels_one_hot[start:end]
 
+            # y_enc.requires_grad = True
+
+            # print(y_enc)
             start_time = time.perf_counter()
 
             # Forward pass
             output = model(X_enc)
             loss = loss_fn(output, y_enc)
 
+            model.zero_grad()
+
             # perform backward pass:
             loss.backward()
-            model.zero_grad()
             model.update_parameters(LEARNING_RATE)
+
+            # print the crypten model parameters in plaintext
+            # plain_params = model.parameters()
+            # for i, p in enumerate(plain_params):
+            #     params = p.get_plain_text()
+            #     # crypten.print(f"Model parameters [{i}]: {params}, {type(params)}")
+            #     if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
+            #         crypten.print(f"Model parameters [{i}] did not change")
+            #     prev_params[i] = params
 
 
             if batch % 100 == 0:
@@ -115,7 +129,7 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
 
 
 def main():
-
+    crypten.common.serial.register_safe_class(ExampleNet)
     training_data, test_data = download_mnist()
 
     print(type(training_data))
