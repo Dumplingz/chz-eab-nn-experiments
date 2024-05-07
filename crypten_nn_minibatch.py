@@ -72,7 +72,7 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
     train_labels_one_hot = y_eye[train_labels]
 
     encrypted_train_data = crypten.cryptensor(train_data)
-    encrypted_train_labels_one_hot = crypten.cryptensor(train_labels_one_hot)
+    encrypted_train_labels_one_hot = crypten.cryptensor(train_labels_one_hot, requires_grad=True)
 
 
     num_batches = encrypted_train_data.size(0) // batch_size
