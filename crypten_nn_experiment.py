@@ -65,7 +65,7 @@ def train_encrypted_nn(train_loader, test_loader):
     for epoch in range(num_epochs):
         epoch_time_start = time.perf_counter()
         for batch, (X, y) in enumerate(train_loader):
-            
+
             start_time = time.perf_counter()
 
             y_eye = torch.eye(10)
@@ -81,7 +81,7 @@ def train_encrypted_nn(train_loader, test_loader):
 
             optimizer.zero_grad()
 
-            # perform backward pass: 
+            # perform backward pass:
             loss.backward()
             optimizer.step()
 

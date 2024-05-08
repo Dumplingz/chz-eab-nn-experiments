@@ -48,3 +48,5 @@ def test(dataloader, model, loss_fn):
     test_loss = test_loss.get_plain_text() / num_batches
     correct /= size
     crypten.print(f"Test Error: \n Accuracy: {correct}, Avg loss: {test_loss} \n")
+
+    return correct

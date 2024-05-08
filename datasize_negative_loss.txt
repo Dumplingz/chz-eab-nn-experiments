@@ -1,0 +1,133 @@
+<class 'torchvision.datasets.mnist.FashionMNIST'>
+crypten_nn_datasize.py:136: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  array_training_data = torch.tensor(training_data.data).float()
+crypten_nn_datasize.py:137: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  array_training_labels = torch.tensor(training_data.targets).long()
+torch.Size([60000, 28, 28])
+Shape of X [N, C, H, W]: torch.Size([64, 1, 28, 28])
+Shape of y: torch.Size([64]) torch.int64
+training encrypted model
+trial 0 batch size 7500
+converting pytorch model to crypten model
+converting pytorch model to crypten model
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+model convertedmodel converted
+
+encrypting model
+ready to train
+setting train mode
+ready to train
+loss: 7.7454833984375  [64/7500], time: 2.6196834800066426
+loss: 0.752349853515625  [6464/7500], time: 2.740504653949756
+Epoch 0 took 323.3299021110288 seconds
+loss: 0.776031494140625  [64/7500], time: 2.8383066069800407
+loss: 0.5839996337890625  [6464/7500], time: 2.7483005149988458
+Epoch 1 took 327.41991322499234 seconds
+loss: 0.48333740234375  [64/7500], time: 2.7996501289890148
+loss: 0.4893646240234375  [6464/7500], time: 2.82312048698077
+Epoch 2 took 326.13461672799895 seconds
+trial 0 batch size 15000
+converting pytorch model to crypten model
+converting pytorch model to crypten model
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+model convertedmodel converted
+
+encrypting model
+ready to train
+setting train mode
+ready to train
+loss: 7.555938720703125  [64/15000], time: 2.759570711001288
+loss: 0.726409912109375  [6464/15000], time: 2.7003277160110883
+loss: 0.4322967529296875  [12864/15000], time: 2.7021444689598866
+Epoch 0 took 640.2190566939535 seconds
+loss: 0.49285888671875  [64/15000], time: 2.7582634940044954
+loss: 0.5563507080078125  [6464/15000], time: 2.812103977019433
+loss: 0.3566131591796875  [12864/15000], time: 2.8491854339954443
+Epoch 1 took 655.4111793180346 seconds
+loss: 0.34075927734375  [64/15000], time: 2.775647303031292
+loss: 0.4806060791015625  [6464/15000], time: 2.7463011170038953
+loss: 0.31512451171875  [12864/15000], time: 2.78663940198021
+Epoch 2 took 653.2220050850301 seconds
+trial 0 batch size 30000
+converting pytorch model to crypten model
+converting pytorch model to crypten model
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+model convertedmodel converted
+
+encrypting model
+ready to train
+setting train mode
+ready to train
+loss: 7.6476287841796875  [64/30000], time: 2.7340454030199908
+loss: 0.70477294921875  [6464/30000], time: 2.8631271359627135
+loss: 0.394927978515625  [12864/30000], time: 2.7786043290398084
+loss: 0.528106689453125  [19264/30000], time: 2.8191804939997382
+loss: 0.6383209228515625  [25664/30000], time: 2.772725668968633
+Epoch 0 took 1322.203212433029 seconds
+loss: 0.39678955078125  [64/30000], time: 2.797566811030265
+loss: 0.4699554443359375  [6464/30000], time: 2.838946183968801
+loss: 0.3532867431640625  [12864/30000], time: 2.8026461849804036
+loss: 0.4445343017578125  [19264/30000], time: 2.81221457204083
+loss: 0.4820709228515625  [25664/30000], time: 2.8203631249489263
+Epoch 1 took 1318.9143230100162 seconds
+loss: 0.3262939453125  [64/30000], time: 2.856627045024652
+loss: -163702704.0  [6464/30000], time: 2.8065061849774793
+loss: 18560596.0  [12864/30000], time: 2.820798161032144
+loss: 208891984.0  [19264/30000], time: 2.745684974011965
+loss: 137595888.0  [25664/30000], time: 2.7464528750278987
+Epoch 2 took 1302.1135645849863 seconds
+trial 0 batch size 60000
+converting pytorch model to crypten model
+converting pytorch model to crypten model
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+/home/cc/chz_sok_experiments/chz-sok-nn-experiments/nn_venv/lib/python3.8/site-packages/crypten/nn/onnx_converter.py:176: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  param = torch.from_numpy(numpy_helper.to_array(node))
+model convertedmodel converted
+
+encrypting model
+ready to train
+setting train mode
+ready to train
+loss: 7.5135498046875  [64/60000], time: 2.7692243630299345
+loss: 0.6738128662109375  [6464/60000], time: 2.775590331002604
+loss: 0.4465179443359375  [12864/60000], time: 2.7348642949946225
+loss: 0.534912109375  [19264/60000], time: 2.763291007024236
+loss: 0.6933746337890625  [25664/60000], time: 2.7888039590325207
+loss: 0.50738525390625  [32064/60000], time: 2.7677011039922945
+loss: 0.586212158203125  [38464/60000], time: 2.8048458410194144
+loss: 0.5342254638671875  [44864/60000], time: 2.7791515410062857
+loss: 0.5756683349609375  [51264/60000], time: 2.811873482016381
+loss: 0.5477752685546875  [57664/60000], time: 2.9341768649755977
+Epoch 0 took 2621.520804527041 seconds
+loss: 0.4134674072265625  [64/60000], time: 2.8608092419453897
+loss: -106999024.0  [6464/60000], time: 2.7923907859949395
+loss: 359281760.0  [12864/60000], time: 2.813470127992332
+loss: -3322203.25  [19264/60000], time: 2.701940161990933
+loss: -45202092.0  [25664/60000], time: 2.8862708000233397
+loss: -133053176.0  [32064/60000], time: 2.805273656034842
+loss: 8802504.0  [38464/60000], time: 2.8977670060121454
+loss: -138290624.0  [44864/60000], time: 2.8234492480405606
+loss: -255418032.0  [51264/60000], time: 2.79788066301262
+loss: -68780944.0  [57664/60000], time: 2.8094084190088324
+Epoch 1 took 2616.5545454660314 seconds
+loss: 426975360.0  [64/60000], time: 2.7739597290055826
+loss: -35518640.0  [6464/60000], time: 2.8145571519853547
+loss: -294168128.0  [12864/60000], time: 2.695636004966218
+loss: -472838400.0  [19264/60000], time: 2.7629430149681866
+loss: 342492096.0  [25664/60000], time: 2.8412191810202785
+loss: 126449736.0  [32064/60000], time: 2.664793902018573
+loss: -65293640.0  [38464/60000], time: 2.7349580690497532
+loss: 329549632.0  [44864/60000], time: 2.870697711012326
+loss: 128474384.0  [51264/60000], time: 2.799019527970813
+loss: -378031808.0  [57664/60000], time: 2.775202759017702
+Epoch 2 took 2628.700979561021 seconds

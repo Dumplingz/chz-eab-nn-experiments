@@ -99,16 +99,18 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
             loss.backward()
             model.update_parameters(LEARNING_RATE)
 
+            crypten.print(loss.get_plain_text())
+
             # print the crypten model parameters in plaintext
-            plain_params = model.parameters()
-            for i, p in enumerate(plain_params):
-                # if(p.grad is None):
-                #     crypten.print(f"grad: false")
-                params = p.get_plain_text()
-                # crypten.print(f"Model parameters [{i}]: {params}, {type(params)}")
-                if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
-                    crypten.print(f"Model parameters [{i}] did not change")
-                prev_params[i] = params
+            # plain_params = model.parameters()
+            # for i, p in enumerate(plain_params):
+            #     # if(p.grad is None):
+            #     #     crypten.print(f"grad: false")
+            #     params = p.get_plain_text()
+            #     # crypten.print(f"Model parameters [{i}]: {params}, {type(params)}")
+            #     if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
+            #         crypten.print(f"Model parameters [{i}] did not change")
+            #     prev_params[i] = params
 
 
             if batch % 100 == 0:
@@ -125,16 +127,19 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
 
         test_start_time = epoch_time_end
 
-        test(test_loader, model, loss_fn)
+        accuracy = test(test_loader, model, loss_fn)
         model.train()
 
         test_end_time = time.perf_counter()
+
+        test_duration = test_end_time - test_start_time
 
         epoch_duration = epoch_time_end - epoch_time_start
         crypten.print(f"Epoch {epoch} took {epoch_duration} seconds")
         with open(OUTFILE, "a") as fp:
             wr = csv.writer(fp, dialect='excel')
-            wr.writerow([epoch_duration, epoch, batch_size, encrypted_train_data.size(0)])
+            # epoch_duration, epoch, batch_size, data_size, accuracy, test_duration
+            wr.writerow([epoch_duration, epoch, batch_size, encrypted_train_data.size(0), accuracy, test_duration])
 
 
 
