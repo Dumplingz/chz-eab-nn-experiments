@@ -3,7 +3,7 @@ import crypten.optim
 import torch
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from torch_nn_modules import ExampleNet
+from torch_nn_modules import ExampleNet, test
 from torch.utils.data import DataLoader
 import crypten.mpc as mpc
 import time
@@ -37,7 +37,7 @@ def download_mnist():
     return training_data, test_data
 
 @mpc.run_multiprocess(world_size=2)
-def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
+def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_SIZE):
     """
     Trains an encrypted model on data provided by train_loader.
 
@@ -77,8 +77,8 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
 
     for epoch in range(NUM_EPOCHS):
         epoch_time_start = time.perf_counter()
-        # prev_params = [None] * 6
-        for batch in range(num_batches):
+        prev_params = [None] * 6
+        for batch in range(5):
             start, end = batch * batch_size, (batch + 1) * batch_size
 
             X_enc = encrypted_train_data[start:end]
@@ -100,13 +100,15 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
             model.update_parameters(LEARNING_RATE)
 
             # print the crypten model parameters in plaintext
-            # plain_params = model.parameters()
-            # for i, p in enumerate(plain_params):
-            #     params = p.get_plain_text()
-            #     # crypten.print(f"Model parameters [{i}]: {params}, {type(params)}")
-            #     if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
-            #         crypten.print(f"Model parameters [{i}] did not change")
-            #     prev_params[i] = params
+            plain_params = model.parameters()
+            for i, p in enumerate(plain_params):
+                # if(p.grad is None):
+                #     crypten.print(f"grad: false")
+                params = p.get_plain_text()
+                # crypten.print(f"Model parameters [{i}]: {params}, {type(params)}")
+                if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
+                    crypten.print(f"Model parameters [{i}] did not change")
+                prev_params[i] = params
 
 
             if batch % 100 == 0:
@@ -120,6 +122,14 @@ def train_encrypted_nn(train_data, train_labels, batch_size=BATCH_SIZE):
 
 
         epoch_time_end = time.perf_counter()
+
+        test_start_time = epoch_time_end
+
+        test(test_loader, model, loss_fn)
+        model.train()
+
+        test_end_time = time.perf_counter()
+
         epoch_duration = epoch_time_end - epoch_time_start
         crypten.print(f"Epoch {epoch} took {epoch_duration} seconds")
         with open(OUTFILE, "a") as fp:
@@ -155,7 +165,7 @@ def main():
         for data_size in [7500, 15000, 30000, 60000]:
             print(f"trial {trial} batch size {data_size}")
             # train_encrypted_nn(train_dataloader, test_dataloader)
-            train_encrypted_nn(array_training_data[:data_size], array_training_labels[:data_size])
+            train_encrypted_nn(array_training_data[:data_size], array_training_labels[:data_size], test_dataloader)
 
 if __name__ == '__main__':
     main()
