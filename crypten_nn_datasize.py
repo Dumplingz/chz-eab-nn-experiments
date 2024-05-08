@@ -166,12 +166,13 @@ def main():
     crypten.init()
     torch.set_num_threads(1)
 
+    test_dataloader = DataLoader(test_data, batch_size=BATCH_SIZE)
+
     print("training encrypted model")
     for trial in range(NUM_TRIALS):
         for data_size in [7500, 15000, 30000, 60000]:
-            # Create data loaders this is hacky af
+            # Create data loaders ... this is hacky af
             train_dataloader = DataLoader(training_data, batch_size=data_size)
-            test_dataloader = DataLoader(test_data, batch_size=data_size)
 
             # batch size is now data size, and only one batch is taken at a time...
             for array_training_data,array_training_labels in train_dataloader:
