@@ -77,7 +77,9 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
 
     for epoch in range(NUM_EPOCHS):
         epoch_time_start = time.perf_counter()
+        prev_prev_params = [None] * 6
         prev_params = [None] * 6
+        loss_neg_printed = False
         for batch in range(num_batches):
             start, end = batch * batch_size, (batch + 1) * batch_size
 
@@ -105,7 +107,7 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
             if (curr_loss < 0):
                 loss_negative = True
 
-            if loss_negative:
+            if loss_negative and not loss_neg_printed:
                 crypten.print(f"Loss was negative")
                 crypten.print(f"Negative loss: {curr_loss}")
                 crypten.print(f"Output: {output.get_plain_text()}")
@@ -118,11 +120,14 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
                 if(p.grad is None):
                     crypten.print(f"grad: false")
                 params = p.get_plain_text()
-                if (loss_negative):
+                if (loss_negative and not loss_neg_printed):
                     crypten.print(f"Model parameters [{i}]: {params}")
                     crypten.print(f"Previous Model parameters [{i}]: {prev_params[i]}")
+                    crypten.print(f"Previous Previous Model parameters [{i}]: {prev_prev_params[i]}")
+                    loss_neg_printed = True
                 if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
                     crypten.print(f"Model parameters [{i}] did not change")
+                prev_prev_params[i] = prev_params[i]
                 prev_params[i] = params
 
 
@@ -171,7 +176,6 @@ def main():
     print("training encrypted model")
     for trial in range(NUM_TRIALS):
         for batch_size in [32,64,128,256]:
-            BATCH_SIZE = batch_size
             # Create data loaders ... this is hacky af
             train_dataloader = DataLoader(training_data, batch_size=60000)
 
@@ -179,11 +183,11 @@ def main():
             for array_training_data,array_training_labels in train_dataloader:
                 print(f"trial {trial} batch size {batch_size}")
                 # train_encrypted_nn(train_dataloader, test_dataloader)
-                train_encrypted_nn(array_training_data, array_training_labels, test_dataloader)
+                train_encrypted_nn(array_training_data, array_training_labels, test_dataloader, batch_size)
                 break
 
             # train with non-normalized int [0, 255] data
-            # train_encrypted_nn(int_training_data, int_training_labels, test_dataloader)
+            train_encrypted_nn(int_training_data, int_training_labels, test_dataloader, batch_size)
 
 if __name__ == '__main__':
     main()
