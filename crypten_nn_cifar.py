@@ -3,7 +3,7 @@ import crypten.optim
 import torch
 from torchvision import datasets
 from torchvision.transforms import ToTensor, transforms
-from torch_nn_modules import ExampleNet, CifarNet, test
+from torch_nn_helpers import ExampleNet, CifarNet, test
 from torch.utils.data import DataLoader
 import crypten.mpc as mpc
 import time

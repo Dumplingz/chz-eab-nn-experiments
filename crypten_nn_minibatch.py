@@ -3,7 +3,7 @@ import crypten.optim
 import torch
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from torch_nn_modules import ExampleNet, test
+from torch_nn_helpers import ExampleNet, test, split_tensor_along_party, download_mnist
 from torch.utils.data import DataLoader
 import crypten.mpc as mpc
 import time
@@ -16,27 +16,9 @@ BATCH_SIZE = 64
 OUTFILE = "crypten_experiments/datasize_nn.csv"
 LEARNING_RATE = 0.001
 NUM_TRIALS = 1
+WORLD_SIZE = 2
 
-def download_mnist():
-    # Download training data from open datasets.
-    training_data = datasets.FashionMNIST(
-        root="data",
-        train=True,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    # Download test data from open datasets.
-    test_data = datasets.FashionMNIST(
-        root="data",
-        train=False,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    return training_data, test_data
-
-@mpc.run_multiprocess(world_size=2)
+@mpc.run_multiprocess(world_size=WORLD_SIZE)
 def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_SIZE):
     """
     Trains an encrypted model on data provided by train_loader.
@@ -66,11 +48,20 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
     crypten.print("ready to train")
     size = len(train_data)
 
+    # make y data one hot
     y_eye = torch.eye(10)
     train_labels_one_hot = y_eye[train_labels]
 
-    encrypted_train_data = crypten.cryptensor(train_data)
-    encrypted_train_labels_one_hot = crypten.cryptensor(train_labels_one_hot, requires_grad=True)
+    # split data evenly among all parties, then concat them
+    split_train_data = split_tensor_along_party(train_data,WORLD_SIZE)
+    split_train_labels_one_hot = split_tensor_along_party(train_labels_one_hot,2)
+    encrypted_split_train_data = []
+    encrypted_split_train_labels_one_hot = []
+    for i, (data, labels) in enumerate(zip(split_train_data, split_train_labels_one_hot)):
+        encrypted_split_train_data.append(crypten.cryptensor(data, src=i))
+        encrypted_split_train_labels_one_hot.append(crypten.cryptensor(labels, src=i))
+    encrypted_train_data = crypten.cat(encrypted_split_train_data, dim=0)
+    encrypted_train_labels_one_hot = crypten.cat(encrypted_split_train_labels_one_hot, dim=0)
 
     # number of batches
     num_batches = encrypted_train_data.size(0) // batch_size
@@ -96,7 +87,6 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
             # perform backward pass:
             loss.backward()
 
-            curr_loss = loss.get_plain_text()
             model.update_parameters(LEARNING_RATE)
 
 
@@ -151,12 +141,8 @@ def main():
             # batch size is now data size, and only one batch is taken at a time...
             for array_training_data,array_training_labels in train_dataloader:
                 print(f"trial {trial} batch size {batch_size}")
-                # train_encrypted_nn(train_dataloader, test_dataloader)
                 train_encrypted_nn(array_training_data, array_training_labels, test_dataloader, batch_size)
                 break
-
-            # train with non-normalized int [0, 255] data
-            # train_encrypted_nn(int_training_data, int_training_labels, test_dataloader, batch_size)
 
 if __name__ == '__main__':
     main()
