@@ -13,7 +13,7 @@ import csv
 # Define training parameters
 NUM_EPOCHS = 3
 BATCH_SIZE = 64
-OUTFILE = "crypten_experiments/datasize_nn.csv"
+OUTFILE = "crypten_experiments/multiparty_nn.csv"
 LEARNING_RATE = 0.001
 NUM_TRIALS = 1
 WORLD_SIZE = 2
@@ -29,6 +29,8 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
     Returns:
     - None
     """
+    # print("hi")
+    # return
     # dummy input for crypten model
     dummy_input = torch.empty(1, 1, 28, 28)
 
@@ -133,14 +135,14 @@ def main():
 
     print("training encrypted model")
     for trial in range(NUM_TRIALS):
-        for batch_size in [32,64,128,256]:
+        for num_parties in [2,3,4]:
             # Create data loaders ... this is hacky af
             train_dataloader = DataLoader(training_data, batch_size=60000)
 
             # batch size is now data size, and only one batch is taken at a time...
             for array_training_data,array_training_labels in train_dataloader:
-                print(f"trial {trial} batch size {batch_size}")
-                mpc.run_multiprocess(world_size=WORLD_SIZE)(train_encrypted_nn)(array_training_data, array_training_labels, test_dataloader, batch_size)
+                print(f"trial {trial} party size {num_parties}")
+                mpc.run_multiprocess(world_size=num_parties)(train_encrypted_nn)(array_training_data, array_training_labels, test_dataloader, 64)
                 break
 
 if __name__ == '__main__':
