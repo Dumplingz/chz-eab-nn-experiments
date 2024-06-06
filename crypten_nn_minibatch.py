@@ -13,7 +13,7 @@ import csv
 # Define training parameters
 NUM_EPOCHS = 3
 BATCH_SIZE = 64
-OUTFILE = "crypten_experiments/datasize_nn.csv"
+OUTFILE = "crypten_experiments/minibatch_nn.csv"
 LEARNING_RATE = 0.001
 NUM_TRIALS = 1
 WORLD_SIZE = 2
