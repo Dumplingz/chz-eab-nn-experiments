@@ -18,7 +18,7 @@ LEARNING_RATE = 0.001
 NUM_TRIALS = 1
 WORLD_SIZE = 2
 
-def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_SIZE):
+def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_SIZE, num_parties=WORLD_SIZE):
     """
     Trains an encrypted model on data provided by train_loader.
 
@@ -54,8 +54,8 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
     train_labels_one_hot = y_eye[train_labels]
 
     # split data evenly among all parties, then concat them
-    split_train_data = split_tensor_along_party(train_data,WORLD_SIZE)
-    split_train_labels_one_hot = split_tensor_along_party(train_labels_one_hot,2)
+    split_train_data = split_tensor_along_party(train_data,num_parties)
+    split_train_labels_one_hot = split_tensor_along_party(train_labels_one_hot,num_parties)
     encrypted_split_train_data = []
     encrypted_split_train_labels_one_hot = []
     for i, (data, labels) in enumerate(zip(split_train_data, split_train_labels_one_hot)):
@@ -142,7 +142,8 @@ def main():
             # batch size is now data size, and only one batch is taken at a time...
             for array_training_data,array_training_labels in train_dataloader:
                 print(f"trial {trial} party size {num_parties}")
-                mpc.run_multiprocess(world_size=num_parties)(train_encrypted_nn)(array_training_data, array_training_labels, test_dataloader, 64)
+                mpc.run_multiprocess(world_size=num_parties)(train_encrypted_nn)(
+                    array_training_data, array_training_labels, test_dataloader, 64, num_parties)
                 break
 
 if __name__ == '__main__':

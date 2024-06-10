@@ -17,26 +17,6 @@ OUTFILE = "crypten_experiments/datasize_cifar_nn.csv"
 LEARNING_RATE = 0.001
 NUM_TRIALS = 1
 
-def download_mnist():
-    # Download training data from open datasets.
-    training_data = datasets.FashionMNIST(
-        root="data",
-        train=True,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    # Download test data from open datasets.
-    test_data = datasets.FashionMNIST(
-        root="data",
-        train=False,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    return training_data, test_data
-
-
 def download_cifar():
     transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -124,34 +104,7 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
             # perform backward pass:
             loss.backward()
 
-            curr_loss = loss.get_plain_text()
             model.update_parameters(LEARNING_RATE)
-            loss_negative = False
-
-            if (curr_loss < 0):
-                loss_negative = True
-
-            if loss_negative:
-                crypten.print(f"Loss was negative")
-                crypten.print(f"Negative loss: {curr_loss}")
-                crypten.print(f"Output: {output.get_plain_text()}")
-                crypten.print(f"y_enc: {y_enc.get_plain_text()}")
-                crypten.print(f"X_enc: {X_enc.get_plain_text()}")
-
-            # print the crypten model parameters in plaintext
-            plain_params = model.parameters()
-            for i, p in enumerate(plain_params):
-                # print(i)
-                if(p.grad is None):
-                    crypten.print(f"grad: false")
-                params = p.get_plain_text()
-                if (loss_negative):
-                    crypten.print(f"Model parameters [{i}]: {params}")
-                    crypten.print(f"Previous Model parameters [{i}]: {prev_params[i]}")
-                if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
-                    crypten.print(f"Model parameters [{i}] did not change")
-                prev_params[i] = params
-
 
             if batch % 100 == 0:
                 end_time = time.perf_counter()
