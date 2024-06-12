@@ -1,0 +1,3 @@
+[submodule "chz-sok-nvflare-experiments"]
+	path = chz-sok-nvflare-experiments
+	url = https://github.com/Dumplingz/chz-sok-nvflare-experiments.git
