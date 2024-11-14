@@ -13,11 +13,11 @@ from torch.utils.data import Dataset, DataLoader, TensorDataset
 
 # code is modified from mnist_reader.py in fashion-mnist repository
 def load_mnist(image_path, label_path):
-    with gzip.open(label_path, 'rb') as lbpath:
+    with open(label_path, 'rb') as lbpath:
         labels = np.frombuffer(lbpath.read(), dtype=np.uint8,
                                offset=8)
 
-    with gzip.open(image_path, 'rb') as imgpath:
+    with open(image_path, 'rb') as imgpath:
         images = np.frombuffer(imgpath.read(), dtype=np.uint8,
                                offset=16).reshape(len(labels), 784)
 
@@ -54,13 +54,21 @@ if __name__ == "__main__":
     NUM_TRIALS = 1
 
     # Load data
+    # X_train, y_train = load_mnist(
+    #     "../fashion-mnist/data/fashion/train-images-idx3-ubyte.gz",
+    #     "../fashion-mnist/data/fashion/train-labels-idx1-ubyte.gz",
+    # )
+    # X_test, y_test = load_mnist(
+    #     "../fashion-mnist/data/fashion/t10k-images-idx3-ubyte.gz",
+    #     "../fashion-mnist/data/fashion/t10k-labels-idx1-ubyte.gz",
+    # )
     X_train, y_train = load_mnist(
-        "../fashion-mnist/data/fashion/train-images-idx3-ubyte.gz",
-        "../fashion-mnist/data/fashion/train-labels-idx1-ubyte.gz",
+        "../data/FashionMNIST/raw/train-images-idx3-ubyte",
+        "../data/FashionMNIST/raw/train-labels-idx1-ubyte",
     )
     X_test, y_test = load_mnist(
-        "../fashion-mnist/data/fashion/t10k-images-idx3-ubyte.gz",
-        "../fashion-mnist/data/fashion/t10k-labels-idx1-ubyte.gz",
+        "../data/FashionMNIST/raw/t10k-images-idx3-ubyte",
+        "../data/FashionMNIST/raw/t10k-labels-idx1-ubyte",
     )
     
     print(X_train.shape)
