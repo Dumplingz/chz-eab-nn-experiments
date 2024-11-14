@@ -3,7 +3,7 @@ import crypten.optim
 import torch
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from torch_nn_helpers import ExampleNet, test
+from torch_nn_helpers import ExampleNet, test, download_mnist
 from torch.utils.data import DataLoader
 import crypten.mpc as mpc
 import time
@@ -16,25 +16,6 @@ BATCH_SIZE = 64
 OUTFILE = "crypten_experiments/datasize_nn.csv"
 LEARNING_RATE = 0.001
 NUM_TRIALS = 1
-
-def download_mnist():
-    # Download training data from open datasets.
-    training_data = datasets.FashionMNIST(
-        root="data",
-        train=True,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    # Download test data from open datasets.
-    test_data = datasets.FashionMNIST(
-        root="data",
-        train=False,
-        download=True,
-        transform=ToTensor(),
-    )
-
-    return training_data, test_data
 
 @mpc.run_multiprocess(world_size=2)
 def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_SIZE):
@@ -77,14 +58,12 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
 
     for epoch in range(NUM_EPOCHS):
         epoch_time_start = time.perf_counter()
-        prev_params = [None] * 6
         for batch in range(num_batches):
             start, end = batch * batch_size, (batch + 1) * batch_size
 
             X_enc = encrypted_train_data[start:end]
             y_enc = encrypted_train_labels_one_hot[start:end]
 
-            # y_enc.requires_grad = True
 
             # print(y_enc)
             start_time = time.perf_counter()
@@ -98,32 +77,7 @@ def train_encrypted_nn(train_data, train_labels, test_loader, batch_size=BATCH_S
             # perform backward pass:
             loss.backward()
 
-            curr_loss = loss.get_plain_text()
             model.update_parameters(LEARNING_RATE)
-            loss_negative = False
-
-            if (curr_loss < 0):
-                loss_negative = True
-
-            if loss_negative:
-                crypten.print(f"Loss was negative")
-                crypten.print(f"Negative loss: {curr_loss}")
-                crypten.print(f"Output: {output.get_plain_text()}")
-                crypten.print(f"y_enc: {y_enc.get_plain_text()}")
-                crypten.print(f"X_enc: {X_enc.get_plain_text()}")
-
-            # print the crypten model parameters in plaintext
-            plain_params = model.parameters()
-            for i, p in enumerate(plain_params):
-                if(p.grad is None):
-                    crypten.print(f"grad: false")
-                params = p.get_plain_text()
-                if (loss_negative):
-                    crypten.print(f"Model parameters [{i}]: {params}")
-                    crypten.print(f"Previous Model parameters [{i}]: {prev_params[i]}")
-                if (prev_params[i] is not None) and (torch.equal(params, prev_params[i])):
-                    crypten.print(f"Model parameters [{i}] did not change")
-                prev_params[i] = params
 
 
             if batch % 100 == 0:
@@ -182,7 +136,7 @@ def main():
                 break
 
             # train with non-normalized int [0, 255] data
-            train_encrypted_nn(int_training_data[:data_size], int_training_labels[:data_size], test_dataloader)
+            # train_encrypted_nn(int_training_data[:data_size], int_training_labels[:data_size], test_dataloader)
 
 if __name__ == '__main__':
     main()
