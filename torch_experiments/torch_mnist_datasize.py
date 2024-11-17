@@ -1,7 +1,7 @@
 import os
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader, Subset, TensorDataset
 from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor, PILToTensor
 import time
@@ -11,6 +11,34 @@ from torch_helpers import download_mnist, NeuralNetwork, device, train, test
 
 BATCH_SIZE = 64
 
+def create_mnist_dataloader(train_image_idx, train_label_idx, test_image_idx, test_label_idx, data_size, batch_size):
+    
+    training_data, test_data = download_mnist()
+    
+    X_train, y_train = training_data.data.numpy(), training_data.targets.numpy()
+    X_test, y_test = test_data.data.numpy(), test_data.targets.numpy()
+    
+    print(X_train.shape)
+    print(type(X_train))
+    
+    X_train = torch.from_numpy(X_train).float()/255.0
+    y_train = torch.from_numpy(y_train).long()
+    X_test = torch.from_numpy(X_test).float()/255.0
+    y_test = torch.from_numpy(y_test).long()
+    
+    X_train = X_train.reshape(-1, 1, 28, 28)
+    X_test = X_test.reshape(-1, 1, 28, 28)
+
+    train_dataset = TensorDataset(X_train, y_train)
+    test_dataset = TensorDataset(X_test, y_test)
+    
+    train_dataset = Subset(train_dataset, range(data_size))
+    
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, test_loader
+
 
 if __name__ == "__main__":
     torch.set_num_threads(1)
@@ -18,18 +46,19 @@ if __name__ == "__main__":
     training_data, test_data = download_mnist()
     
     loss_fn = nn.CrossEntropyLoss()
-    test_dataloader = DataLoader(test_data, batch_size=BATCH_SIZE)
+    train_dataloader, test_dataloader = create_mnist_dataloader(0, 0, 0, 0, 60000, BATCH_SIZE)
 
     epochs = 3
     for datasize in [7500,15000,30000,60000]:
         model = NeuralNetwork().to(device)
         optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
         for epoch in range(epochs):
-            subset_training_data = Subset(training_data, range(datasize))
-            train_dataloader_subset = DataLoader(subset_training_data, batch_size=BATCH_SIZE)
+            # subset_training_data = Subset(training_data, range(datasize))
+            # train_dataloader_subset = DataLoader(subset_training_data, batch_size=BATCH_SIZE)
+            
             print(f"Epoch {epoch+1}\n-------------------------------")
             epoch_time_start = time.perf_counter()
-            train(train_dataloader_subset, model, loss_fn, optimizer)
+            train(train_dataloader, model, loss_fn, optimizer)
             epoch_time_end = time.perf_counter()
 
             test_start_time = epoch_time_end
