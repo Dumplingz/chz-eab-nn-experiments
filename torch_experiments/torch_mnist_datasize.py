@@ -11,10 +11,8 @@ from torch_helpers import download_mnist, NeuralNetwork, device, train, test
 
 BATCH_SIZE = 64
 
-def create_mnist_dataloader(train_image_idx, train_label_idx, test_image_idx, test_label_idx, data_size, batch_size):
-    
-    training_data, test_data = download_mnist()
-    
+def create_mnist_dataloader(training_data, test_data, data_size, batch_size):
+        
     X_train, y_train = training_data.data.numpy(), training_data.targets.numpy()
     X_test, y_test = test_data.data.numpy(), test_data.targets.numpy()
     
@@ -46,7 +44,7 @@ if __name__ == "__main__":
     training_data, test_data = download_mnist()
     
     loss_fn = nn.CrossEntropyLoss()
-    train_dataloader, test_dataloader = create_mnist_dataloader(0, 0, 0, 0, 60000, BATCH_SIZE)
+    # train_dataloader, test_dataloader = create_mnist_dataloader(training_data, test_data, 60000, BATCH_SIZE)
 
     epochs = 3
     for datasize in [7500,15000,30000,60000]:
@@ -55,10 +53,11 @@ if __name__ == "__main__":
         for epoch in range(epochs):
             # subset_training_data = Subset(training_data, range(datasize))
             # train_dataloader_subset = DataLoader(subset_training_data, batch_size=BATCH_SIZE)
-            
+            train_dataloader_subset, test_dataloader = create_mnist_dataloader(training_data, test_data, datasize, BATCH_SIZE)
+
             print(f"Epoch {epoch+1}\n-------------------------------")
             epoch_time_start = time.perf_counter()
-            train(train_dataloader, model, loss_fn, optimizer)
+            train(train_dataloader_subset, model, loss_fn, optimizer)
             epoch_time_end = time.perf_counter()
 
             test_start_time = epoch_time_end
