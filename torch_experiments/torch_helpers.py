@@ -1,7 +1,8 @@
 import torch
+import torch.nn.functional as F
 from torch import nn
 from torchvision import datasets
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, Compose, Normalize
 
 device = (
     "cuda"
@@ -11,6 +12,25 @@ device = (
     else "cpu"
 )
 print(f"Using {device} device")
+
+class CifarNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1 = nn.Linear(16 * 5 * 5, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
 
 class NeuralNetwork(nn.Module):
     def __init__(self):
@@ -28,6 +48,34 @@ class NeuralNetwork(nn.Module):
         x = self.flatten(x)
         logits = self.linear_relu_stack(x)
         return logits
+
+def download_cifar():
+    transform = Compose(
+        [
+            ToTensor(),
+            Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ]
+    )
+
+
+    # Download training data from open datasets.
+    training_data = datasets.CIFAR10(
+        root="data",
+        train=True,
+        download=True,
+        transform=transform,
+        # transform=PILToTensor(),
+    )
+
+    # Download test data from open datasets.
+    test_data = datasets.CIFAR10(
+        root="data",
+        train=False,
+        download=True,
+        transform=transform,
+    )
+    
+    return training_data, test_data
 
 def download_mnist():
     # Download training data from open datasets.
