@@ -63,7 +63,7 @@ def download_cifar():
         root="data",
         train=True,
         download=True,
-        transform=transform,
+        # transform=transform,
         # transform=PILToTensor(),
     )
 
@@ -72,7 +72,7 @@ def download_cifar():
         root="data",
         train=False,
         download=True,
-        transform=transform,
+        # transform=transform,
     )
     
     return training_data, test_data
