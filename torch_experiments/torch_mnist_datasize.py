@@ -80,8 +80,8 @@ if __name__ == "__main__":
                     # epoch_duration, epoch, batch_size, data_size, accuracy, test_duration
                     wr.writerow([epoch_duration, epoch, BATCH_SIZE, datasize, accuracy, test_duration])
             total_time_end = time.perf_counter()
-        with open("mnist/mnist_total_time.csv", "a") as fp:
-            wr = csv.writer(fp, dialect='excel')
-            wr.writerow([total_time_end - total_time_start, datasize])
+            with open("mnist/mnist_total_time.csv", "a") as fp:
+                wr = csv.writer(fp, dialect='excel')
+                wr.writerow([total_time_end - total_time_start, datasize])
 
     print("Done!")
