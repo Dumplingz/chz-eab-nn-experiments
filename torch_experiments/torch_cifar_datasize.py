@@ -42,6 +42,8 @@ def create_cifar_dataloader(training_data, test_data, data_size, batch_size):
 
 if __name__ == "__main__":
     num_trials = int(sys.argv[1])
+    
+    os.makedirs("cifar", exist_ok=True)
     torch.set_num_threads(1)
 
     training_data, test_data = download_cifar()
@@ -53,6 +55,7 @@ if __name__ == "__main__":
     epochs = 3
     for datasize in [6250,12500,25000,50000]:
         for trial in range(num_trials):
+            total_time_start = time.perf_counter()
             model = CifarNetwork().to(device)
             optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
@@ -72,9 +75,13 @@ if __name__ == "__main__":
                 test_duration = test_end_time - test_start_time
 
                 print(f"Epoch {epoch+1} took {epoch_duration} seconds")
-                with open("datasize_cifar_nn.csv", "a") as fp:
+                with open("cifar/cifar.csv", "a") as fp:
                     wr = csv.writer(fp, dialect='excel')
                     # epoch_duration, epoch, batch_size, data_size, accuracy, test_duration
                     wr.writerow([epoch_duration, epoch, batch_size, datasize, accuracy, test_duration])
+            total_time_end = time.perf_counter()
+            with open("cifar/cifar_total_time.csv", "a") as fp:
+                wr = csv.writer(fp, dialect='excel')
+                wr.writerow([total_time_end - total_time_start, "Total Time"])
 
 print("Done!")
