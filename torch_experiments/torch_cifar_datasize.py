@@ -82,6 +82,6 @@ if __name__ == "__main__":
             total_time_end = time.perf_counter()
             with open("cifar/cifar_total_time.csv", "a") as fp:
                 wr = csv.writer(fp, dialect='excel')
-                wr.writerow([total_time_end - total_time_start, "Total Time"])
+                wr.writerow([total_time_end - total_time_start, datasize])
 
 print("Done!")
