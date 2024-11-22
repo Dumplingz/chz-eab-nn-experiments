@@ -63,7 +63,7 @@ def download_cifar():
         root="data",
         train=True,
         download=True,
-        # transform=transform,
+        transform=transform,
         # transform=PILToTensor(),
     )
 
@@ -72,7 +72,7 @@ def download_cifar():
         root="data",
         train=False,
         download=True,
-        # transform=transform,
+        transform=transform,
     )
     
     return training_data, test_data
@@ -102,6 +102,8 @@ def train(dataloader, model, loss_fn, optimizer):
     model.train()
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
+        
+        # print(X)
 
         # Compute prediction error
         pred = model(X.float())
