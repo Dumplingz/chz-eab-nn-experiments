@@ -88,7 +88,7 @@ if __name__ == "__main__":
     batch_size = 4
 
     epochs = 3
-    for datasize in [50000]:
+    for datasize in [6250,12500,25000,50000]:
         for trial in range(num_trials):
             total_time_start = time.perf_counter()
             model = CifarNetwork().to(device)
