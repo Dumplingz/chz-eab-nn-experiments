@@ -135,7 +135,7 @@ def main():
 
     print("training encrypted model")
     for trial in range(NUM_TRIALS):
-        for num_parties in [2,3,4]:
+        for num_parties in [8]:
             # Create data loaders ... this is hacky af
             train_dataloader = DataLoader(training_data, batch_size=60000)
 
