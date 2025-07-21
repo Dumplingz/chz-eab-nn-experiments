@@ -1,5 +1,7 @@
 # Crypten and Torch Experiments
 
+This repository contains the experimental results in the paper "**Running Functions on Pooled Data without Leakage: Comparing Solutions Over Scope, Trust, and Performance**" for CrypTen and Torch on FashionMNIST and CIFAR datasets, along with the scripts used to run the experiments.
+
 ## Setup
 Crypten requires Python version 3.7; one way to switch to this version is to use pyenv (what we used).
 
